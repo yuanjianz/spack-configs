@@ -51,10 +51,10 @@ EOF
 
 # CONFIG_REPO: a the user/repo on github to use for configuration.a custom user/repo/branch in case users wish to
 # provide or test their own configurations.
-export CONFIG_REPO="spack/spack-configs"
+export CONFIG_REPO="yuanjianz/spack-configs"
 export CONFIG_BRANCH="main"
 export SPACK_REPO="spack/spack"
-export SPACK_BRANCH="develop"
+export SPACK_BRANCH="releases/latest"
 export PREFIX=""
 install_specs=()
 export generic_buildcache=""
