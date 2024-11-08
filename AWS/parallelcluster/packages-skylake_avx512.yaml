@@ -1,79 +1,48 @@
 ---  # Skylake packages
 packages:
-  cpio:
-    require:
-      - one_of: ['cflags=-std=c18', '%gcc']
   gcc:
-    require:
-      - one_of: ["gcc@10.2.0 +strip %gcc +binutils ^binutils@2.37 target=x86_64_v3"]
-  gromacs:
-    require:
-      - one_of: ["+intel_provided_gcc %intel ^intel-oneapi-mkl"]
-  intel-oneapi-compilers:
-    require:
-      - one_of: ["intel-oneapi-compilers %gcc target=x86_64_v3"]
-  intel-oneapi-mpi:
-    variants: +external-libfabric generic-names=True
-  kripke:
-    require: "kripke@develop +openmp %oneapi ^cmake%gcc"
-  lammps:
-    require:
-      - one_of: ["lammps@develop lammps_sizes=bigbig +molecule +kspace +rigid +asphere +opt +openmp +openmp-package +intel %intel ^intel-oneapi-mkl"]
-  libidn2:
-    require:
-      - one_of: ['cflags=-std=c18', '%gcc']
+    require: "@10.2.0 +strip %gcc +binutils ^binutils@2.37"
+  openmpi:
+    variants: +lustre +pmi fabrics=ofi schedulers=slurm
+    require: "@4.1.5"
+  slurm:
+    buildable: false
+    externals:
+      - prefix: ${SLURM_ROOT}
+        spec: slurm@${SLURM_VERSION} +pmix
+  pmix:
+    buildable: false
+    externals:
+      - prefix: /opt/pmix
+        spec: pmix@3.2.3
+  libevent:
+    buildable: false
+    externals:
+      - prefix: external
+        spec: libevent@2.1.12
+  hwloc:
+    buildable: false
+    externals:
+      - prefix: external
+        spec: hwloc@2.9.1
+  lustre:
+    buildable: false
+    externals:
+      - prefix: /usr
+        spec: lustre@2.12
   libfabric:
     buildable: false
     externals:
       - prefix: /opt/amazon/efa/
         spec: libfabric@${LIBFABRIC_VERSION}
     require: ['fabrics=shm,efa']
-  libunistring:
-    require:
-      - one_of: ['cflags=-std=c18', '%gcc']
-  mpas-model:
-    require:
-      - one_of: ["mpas-model %intel precision=single ^parallelio+pnetcdf"]
-  mpich:
-    require:
-      - one_of: ["mpich pmi=pmi2 device=ch4 netmod=ofi +slurm"]
-  openfoam:
-    require:
-      - one_of: ["openfoam %gcc ^scotch@6.0.9"]
-  openmpi:
-    variants: ~atomics ~cuda ~cxx ~cxx_exceptions ~internal-hwloc ~java +legacylaunchers ~lustre ~memchecker +pmi +romio ~singularity +vt +wrapper-rpath fabrics=ofi schedulers=slurm
-    require: '@4:'
-  palace:
-    require:
-      - one_of: ["palace %oneapi ^fmt@9.1.0"]
-  pmix:
-    require: ["pmix@3:"]
-  py-devito:
-    require:
-      - one_of: ["py-devito %intel +mpi"]
-  quantum-espresso:
-    require:
-      - one_of: ["quantum-espresso@6.6 %intel ^intel-oneapi-mkl+cluster"]
-  slurm:
-    buildable: false
-    externals:
-      - prefix: ${SLURM_ROOT}
-        spec: slurm@${SLURM_VERSION} +pmix
-  wrf:
-    require:
-      - one_of: ["wrf@4 build_type=dm+sm  %intel"]
   all:
-    compiler: [intel, gcc, clang]
+    compiler: [gcc]
     permissions:
       read: world
       write: user
     providers:
-      blas: [intel-oneapi-mkl]
-      daal: [intel-oneapi-dal]
-      fftw-api: [intel-oneapi-mkl]
-      ipp: [intel-oneapi-ipp]
-      lapack: [intel-oneapi-mkl]
-      mkl: [intel-oneapi-mkl]
-      mpi: [intel-oneapi-mpi, openmpi, mpich]
-      tbb: [intel-oneapi-tbb, intel-tbb]
-      scalapack: [intel-oneapi-mkl]
+      mpi: [openmpi]
+      fortran: [gcc]
+      c: [gcc]
+      zlib-api: [zlib-ng+compat, zlib]
